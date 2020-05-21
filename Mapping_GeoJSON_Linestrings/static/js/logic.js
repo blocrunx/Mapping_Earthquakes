@@ -18,7 +18,7 @@ L.circleMarker([34.0522, -118.2437], {
 
  
 // We create the tile layer that will be the background of our map.
-let streets = L.tileLayer('https://api.mapbox.com/styles/v1/mapbox/navigation-preview-night-v4/tiles/{z}/{x}/{y}?access_token={accessToken}', {
+let nav = L.tileLayer('https://api.mapbox.com/styles/v1/mapbox/navigation-preview-night-v4/tiles/{z}/{x}/{y}?access_token={accessToken}', {
     attribution: 'Map data © <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery (c) <a href="https://www.mapbox.com/">Mapbox</a>',
 	maxZoom: 18,
 	accessToken: API_KEY
@@ -33,28 +33,34 @@ attribution: 'Map data © <a href="https://www.openstreetmap.org/">OpenStreetMap
 
 // Create a base layer that holds both maps.
 let baseMaps = {
-  Street: streets,
+  Navigation: nav,
   Dark: dark
 };
 
 // Create the map object with center, zoom level and default layer.
 let map = L.map('mapid', {
-	center: [30, 30],
+	center: [44, -80],
 	zoom: 2,
-	layers: [streets]
+	layers: [nav]
 })
 
 // Pass our map layers into our layers control and add the layers control to the map.
 L.control.layers(baseMaps).addTo(map);
 
-// Accessing the airport GeoJSON URL
-let airportData = "https://raw.githubusercontent.com/blocrunx/Mapping_Earthquakes/Mapping_GeoJSON_Points/majorAirports.json";
+// Accessing the Toronto airline routes GeoJSON URL.
+let torontoData = "https://raw.githubusercontent.com/blocrunx/Mapping_Earthquakes/Mapping_GeoJSON_Linestrings/torontoRoutes.json";
 
+var myStyle = {
+  "color": "#ff7800",
+  "weight": 2,
+  "opacity": 0.65
+};
 // Grabbing our GeoJSON data.
-d3.json(airportData).then(function(data) {
+d3.json(torontoData).then(function(data) {
   console.log(data);
   L.geoJson(data, {
     // We turn each feature into a marker on the map.
+    style: myStyle,
     onEachFeature: function(feature, layer) {
       console.log(layer);
       layer.bindPopup("<h2>" + "Airport Code: " + feature.properties.faa + "<hr>" + "</h2>" + "<h2>" + "Airport Name: " + feature.properties.name
